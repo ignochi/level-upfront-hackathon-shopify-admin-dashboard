@@ -1,0 +1,157 @@
+"use strict";
+
+function handleBannerAnimation() {
+    const banner = document.querySelector("[data-banner]");
+    const bannerListItems = document.querySelectorAll("[data-bannerListItems]");
+    const leftButton = document.querySelector("[data-bannerLeftButton]");
+    const rightButton = document.querySelector("[data-bannerRightButton]")
+    const CURRENT = "current";
+    const SECOND = "second";
+    const THIRD = "third";
+    const largestIndex = bannerListItems.length - 1;
+    let num1 = 0; //current
+    let num2 = 1; //second
+    let num3 = 2; //third
+
+    // declare the data-bannerPointer
+    // declare its span tags
+    // span tags with index of num1 should have the current class
+
+    console.log(num1, num2, num3);
+
+    function slide() {
+        bannerListItems.forEach((eachSlide) => {
+            eachSlide.classList.remove(CURRENT);
+            eachSlide.classList.remove(SECOND);
+            eachSlide.classList.remove(THIRD);
+        });
+        bannerListItems.item(num1).classList.add(CURRENT);
+        bannerListItems.item(num2).classList.add(SECOND);
+        bannerListItems.item(num3).classList.add(THIRD);
+    }
+
+    function pointer() {
+        const pointer = document.querySelectorAll("[data-bannerPointer] > span");
+        pointer.forEach((eachPointer) => {
+            eachPointer.classList.remove(CURRENT);
+        });
+        pointer.item(num1).classList.add(CURRENT);
+    }
+
+    function incr() {
+        num1 += 1;
+        num2 += 1;
+        num3 += 1;
+
+        if (num1 > largestIndex) { num1 = 0 };
+        if (num2 > largestIndex) { num2 = 0 };
+        if (num3 > largestIndex) { num3 = 0 };
+        console.log(num1, num2, num3);
+        slide();
+        pointer();
+    }
+
+    function decr() {
+        num1 -= 1;
+        num2 -= 1;
+        num3 -= 1;
+
+        if (num1 < 0) { num1 = largestIndex };
+        if (num2 < 0) { num2 = largestIndex };
+        if (num3 < 0) { num3 = largestIndex };
+        console.log(num1, num2, num3);
+        slide();
+        pointer();
+    }
+
+    rightButton.addEventListener("click", incr);
+    leftButton.addEventListener("click", decr);
+    // let id = setInterval(incr, 5000);
+    // banner.addEventListener("mouseenter", () => { clearInterval(id) });
+    // banner.addEventListener("mouseleave", () => { setInterval(incr, 1000) });
+    // banner.addEventListener("mouseenter", () => { console.log("enter") });
+    // banner.addEventListener("mouseleave", () => { console.log("leave") });
+}
+handleBannerAnimation();
+
+function columnSlideAnimation() {
+    const columnContent = document.querySelectorAll("[data-columnContent]");
+    columnContent.forEach((eachColumnContent) => {
+
+        const ul = eachColumnContent.querySelector("[data-columnContent] > ul");
+        const rightButton = eachColumnContent.querySelector("[data-columnRightButton]");
+        const leftButton = eachColumnContent.querySelector("[data-columnLeftButton]");
+        const lastListItemsRightPadding = 26;
+        const totalWidth = eachColumnContent.scrollWidth - lastListItemsRightPadding;
+        let leftOverflow = 0;
+        let visibleWidth = ul.clientWidth;
+        let translationValue = ul.clientWidth;
+        let rightOverflow = totalWidth - (leftOverflow + visibleWidth);
+
+        function translateLeft() {
+            console.log("translationValue used = " + translationValue);
+            if (rightOverflow >= visibleWidth) {
+                ul.style.transform = `translateX(-${translationValue}px)`;
+                leftOverflow = translationValue;
+                rightOverflow = totalWidth - (leftOverflow + visibleWidth);
+                translationValue += visibleWidth;
+            } else {
+                translationValue = translationValue - (visibleWidth - rightOverflow); // 
+                leftOverflow += rightOverflow; //
+                rightOverflow = totalWidth - (leftOverflow + visibleWidth); //
+                ul.style.transform = `translateX(-${translationValue}px)`;
+            }
+            // console.log("totalWidth = " + totalWidth, "leftOverflow = " + leftOverflow, "translationValue = " + translationValue, "visibleWidth = " + visibleWidth, "rightOverflow = " + rightOverflow);
+
+            console.log("translationValue new = " + translationValue);
+        }
+
+        function translateRight() {
+            if (leftOverflow >= visibleWidth) {
+                console.log("translationValue used = " + translationValue);
+                translationValue -= (visibleWidth);
+                leftOverflow = translationValue;
+                rightOverflow = totalWidth - (leftOverflow + visibleWidth);
+                ul.style.transform = `translateX(-${translationValue}px)`;
+                console.log("translationValue new = " + translationValue);
+            }
+        }
+
+        rightButton.addEventListener("click", translateLeft);
+        leftButton.addEventListener("click", translateRight);
+    });
+}
+columnSlideAnimation();
+
+function displayUnsupportedFeaturesPopup() {
+    const links = document.querySelectorAll("a");
+    const unsupportedFeaturesPopup = document.querySelector("[data-unsupportedFeaturesPopup]");
+    links.forEach((eachLink) => {
+        eachLink.addEventListener("click", () => {
+            unsupportedFeaturesPopup.classList.add("unsupportedClass");
+            setTimeout(() => {
+                unsupportedFeaturesPopup.classList.remove("unsupportedClass");
+            }, 3000);
+        })
+    });
+}
+displayUnsupportedFeaturesPopup();
+
+// function test() {
+//     let id;
+
+//     function start() {
+//         id = setInterval(() => {
+//             console.log("name");
+//         }, 1000);
+//     }
+//     start();
+
+//     function pause() {
+//         clearInterval(id);
+//     }
+
+//     setTimeout(pause, 5000);
+//     console.log("yeah")
+// }
+// test();
